@@ -1,0 +1,7 @@
+build/
+*.o
+*.elf
+*.bin
+*.img
+*.lsp
+*.log
