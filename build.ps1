@@ -38,6 +38,8 @@ i686-elf-gcc @cflags "$ROOT\kernel\kernel\mouse.c" -o "$BUILD\mouse.o"
 i686-elf-gcc @cflags "$ROOT\kernel\kernel\desktop.c" -o "$BUILD\desktop.o"
 i686-elf-gcc @cflags "$ROOT\kernel\kernel\syscall.c" -o "$BUILD\syscall.o"
 i686-elf-gcc @cflags "$ROOT\kernel\kernel\lsp.c" -o "$BUILD\lsp.o"
+i686-elf-gcc @cflags "$ROOT\kernel\kernel\timer.c" -o "$BUILD\timer.o"
+i686-elf-gcc @cflags "$ROOT\kernel\kernel\sched.c" -o "$BUILD\sched.o"
 i686-elf-gcc @cflags "$ROOT\kernel\kernel\main.c" -o "$BUILD\main.o"
 
 Write-Host "[4/6] Linking kernel..."
@@ -46,7 +48,7 @@ i686-elf-ld -T "$ROOT\kernel\linker.ld" -o "$BUILD\kernel.elf" `
     "$BUILD\idt_asm.o" "$BUILD\idt.o" "$BUILD\irq_asm.o" "$BUILD\irq.o" `
     "$BUILD\isr_asm.o" "$BUILD\isr.o" `
     "$BUILD\syscall_asm.o" "$BUILD\syscall.o" "$BUILD\usermode_asm.o" `
-    "$BUILD\tty.o" "$BUILD\keyboard.o" "$BUILD\system.o" "$BUILD\pmm.o" "$BUILD\paging.o" "$BUILD\heap.o" "$BUILD\ata.o" "$BUILD\fat16.o" "$BUILD\gfx.o" "$BUILD\mouse.o" "$BUILD\lsp.o" "$BUILD\desktop.o" "$BUILD\main.o"
+    "$BUILD\tty.o" "$BUILD\keyboard.o" "$BUILD\system.o" "$BUILD\pmm.o" "$BUILD\paging.o" "$BUILD\heap.o" "$BUILD\ata.o" "$BUILD\fat16.o" "$BUILD\gfx.o" "$BUILD\mouse.o" "$BUILD\lsp.o" "$BUILD\desktop.o" "$BUILD\timer.o" "$BUILD\sched.o" "$BUILD\main.o"
 i686-elf-objcopy -O binary "$BUILD\kernel.elf" "$BUILD\KERNEL.BIN"
 $kernSz = (Get-Item "$BUILD\KERNEL.BIN").Length
 

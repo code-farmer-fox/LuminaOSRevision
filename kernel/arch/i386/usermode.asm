@@ -4,6 +4,9 @@ section .text
 global enter_user_mode
 global kernel_resume
 
+extern sched_user_enter
+extern sched_user_exit
+
 section .bss
 saved_esp: resd 1
 saved_ret: resd 1
@@ -20,6 +23,8 @@ enter_user_mode:
     mov edi, [esp]
     mov [saved_ret], edi
     mov [saved_esp], esp
+
+    call sched_user_enter
 
     push eax
     mov ax, 0x23
@@ -39,6 +44,6 @@ enter_user_mode:
 
 kernel_resume:
     cli
+    call sched_user_exit
     mov esp, [saved_esp]
-    sti
     ret

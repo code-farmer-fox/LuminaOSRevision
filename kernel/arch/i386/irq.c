@@ -1,6 +1,10 @@
 #include <kernel/irq.h>
 #include <kernel/io.h>
 #include <kernel/idt.h>
+#include <kernel/sched.h>
+#include <kernel/gdt.h>
+
+extern void kernel_resume(void);
 
 extern void irq0(void);
 extern void irq1(void);
@@ -69,7 +73,7 @@ void irq_init(void)
     __asm__ volatile ("sti");
 }
 
-void irq_handler(uint32_t irq_no)
+void irq_handler(uint32_t irq_no, uint32_t cs)
 {
     if (irq_routines[irq_no - 32])
     {
@@ -81,4 +85,13 @@ void irq_handler(uint32_t irq_no)
         outb(0xA0, 0x20);
     }
     outb(0x20, 0x20);
+
+    if (irq_no == 32 && sched_preempt_pending())
+    {
+        if ((cs & 0x03) == 0x03)
+        {
+            sched_preempt_ack();
+            kernel_resume();
+        }
+    }
 }

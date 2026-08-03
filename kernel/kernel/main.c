@@ -16,6 +16,8 @@
 #include <kernel/desktop.h>
 #include <kernel/lsp.h>
 #include <kernel/io.h>
+#include <kernel/timer.h>
+#include <kernel/sched.h>
 #include <stdint.h>
 
 static int str_equ(const char* a, const char* b)
@@ -521,6 +523,8 @@ void kernel_main(uint8_t boot_drive)
     paging_init();
     syscall_stack = pmm_alloc_zero();
     tss_set_stack(syscall_stack + 4096);
+    timer_init();
+    sched_init();
     syscall_init();
 
     print_banner();
@@ -589,6 +593,7 @@ void kernel_main(uint8_t boot_drive)
             tty_puts("  users   - List registered users\n");
             tty_puts("  mem     - Show memory usage\n");
             tty_puts("  memtest - Self-test memory allocator\n");
+            tty_puts("  uptime  - Show system uptime\n");
             tty_puts("  ui      - Start the graphical UI\n");
             if (fs_ready) {
                 tty_puts("  ls      - List files on disk\n");
@@ -649,6 +654,16 @@ void kernel_main(uint8_t boot_drive)
         else if (str_equ(cmd, "memtest"))
         {
             cmd_memtest();
+        }
+        else if (str_equ(cmd, "uptime"))
+        {
+            uint32_t ticks = timer_ticks();
+            tty_puts("Uptime: ");
+            print_uint(ticks / 1000);
+            tty_puts(".");
+            uint32_t frac = (ticks % 1000) / 100;
+            tty_putchar((char)('0' + frac));
+            tty_puts("s\n");
         }
         else if (cmd[0] == 'u' && cmd[1] == 'i' && (cmd[2] == '\0' || cmd[2] == ' '))
         {

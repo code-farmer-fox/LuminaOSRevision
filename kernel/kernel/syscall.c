@@ -7,6 +7,8 @@
 #include <kernel/pmm.h>
 #include <kernel/heap.h>
 #include <kernel/desktop.h>
+#include <kernel/sched.h>
+#include <kernel/timer.h>
 #include <stdint.h>
 
 extern void syscall_asm(void);
@@ -224,8 +226,9 @@ static int sc_win_should_close(int a, int b, int c, int d)
 static int sc_sleep(int ms, int b, int c, int d)
 {
     (void)b; (void)c; (void)d;
-    volatile int i;
-    for (i = 0; i < ms * 20000; i++) { __asm__ volatile (""); }
+    if (ms < 0) ms = 0;
+    sched_note_yield();
+    timer_wait((uint32_t)ms);
     return 0;
 }
 
@@ -321,6 +324,7 @@ void syscall_init(void)
 
 int syscall_dispatch(int num, int a1, int a2, int a3, int a4)
 {
+    sched_note_yield();
     if (num < 0 || num >= SYSCALL_COUNT || !syscall_table[num])
         return -1;
     return syscall_table[num](a1, a2, a3, a4);

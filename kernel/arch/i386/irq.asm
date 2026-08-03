@@ -39,9 +39,10 @@ irq_common_stub:
     mov fs, ax
     mov gs, ax
 
-    push dword [esp + 36]
+    push dword [esp + 48]
+    push dword [esp + 40]
     call irq_handler
-    add esp, 4
+    add esp, 8
 
     pop eax
     mov ds, ax
