@@ -62,7 +62,7 @@ static void print_uint(uint32_t value)
 static void print_banner(void)
 {
     tty_puts("============================================\n");
-    tty_puts("         LuminaOS v0.7.0 - 32-bit\n");
+    tty_puts("         LuminaOS v0.7.1 - 32-bit\n");
     tty_puts("============================================\n\n");
     tty_puts("Type 'help' for commands\n\n");
 }
@@ -616,7 +616,7 @@ void kernel_main(uint8_t boot_drive)
         }
         else if (str_equ(cmd, "ver"))
         {
-            tty_puts("LuminaOS v0.7.0\n");
+            tty_puts("LuminaOS v0.7.1\n");
             tty_puts("Architecture: i686 (32-bit)\n");
             tty_puts("Kernel: Hybrid\n");
             tty_puts("Filesystem: FAT16\n");
