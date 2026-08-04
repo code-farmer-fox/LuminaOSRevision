@@ -321,4 +321,14 @@ foreach ($app in $APPS) {
     Write-Host "  $($name).lsp: $($img.Length) B"
     Write-HddFile "$HDD" "$name.LSP" $img
 }
+
+Write-Host "[8/8] CJK font..."
+$FONT_BIN = "$BUILD\font16.bin"
+& "$ROOT\tools\gen_font.ps1" "$FONT_BIN"
+if ($?) {
+    $fontData = [IO.File]::ReadAllBytes($FONT_BIN)
+    Remove-HddFile "$HDD" "FONT16.BIN"
+    Write-HddFile "$HDD" "FONT16.BIN" $fontData
+    Write-Host "  FONT16.BIN: $($fontData.Length) B"
+}
 Write-Host "=== Build complete ===" -ForegroundColor Green

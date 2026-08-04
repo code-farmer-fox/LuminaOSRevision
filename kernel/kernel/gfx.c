@@ -10,10 +10,17 @@
 
 #define FONT_BYTES_PER_CHAR 16
 
+#define CJK_MAX_GLYPHS 256
+#define CJK_GLYPH_BYTES 32
+
 static uint32_t* lfb;
 static int gfx_w;
 static int gfx_h;
 static uint8_t font[256 * FONT_BYTES_PER_CHAR];
+
+static uint32_t cjk_cp[CJK_MAX_GLYPHS];
+static uint8_t cjk_glyph[CJK_MAX_GLYPHS][CJK_GLYPH_BYTES];
+static int cjk_count;
 
 #define BACK_BUFFER_ADDR 0x00400000
 
@@ -334,19 +341,124 @@ void gfx_draw_char(int x, int y, char c, uint32_t fg, uint32_t bg)
     }
 }
 
+static int cjk_find(uint32_t cp)
+{
+    for (int i = 0; i < cjk_count; i++)
+        if (cjk_cp[i] == cp)
+            return i;
+    return -1;
+}
+
+static void gfx_draw_cjk_glyph(int x, int y, int idx, uint32_t fg, uint32_t bg)
+{
+    const uint8_t* g = cjk_glyph[idx];
+    int transparent = (bg == GFX_TRANSPARENT);
+    for (int row = 0; row < 16; row++) {
+        uint16_t bits = (uint16_t)g[row * 2] | ((uint16_t)g[row * 2 + 1] << 8);
+        for (int col = 0; col < 16; col++) {
+            if ((bits >> (15 - col)) & 1) {
+                gfx_putpixel(x + col, y + row, fg);
+            } else if (!transparent) {
+                gfx_putpixel(x + col, y + row, bg);
+            }
+        }
+    }
+}
+
+static int utf8_decode(const char** pp)
+{
+    const uint8_t* s = (const uint8_t*)*pp;
+    uint8_t b0 = s[0];
+    if (b0 < 0x80) {
+        *pp += 1;
+        return b0;
+    }
+    if ((b0 & 0xE0) == 0xC0 && (s[1] & 0xC0) == 0x80) {
+        *pp += 2;
+        return ((b0 & 0x1F) << 6) | (s[1] & 0x3F);
+    }
+    if ((b0 & 0xF0) == 0xE0 && (s[1] & 0xC0) == 0x80 && (s[2] & 0xC0) == 0x80) {
+        *pp += 3;
+        return ((b0 & 0x0F) << 12) | ((s[1] & 0x3F) << 6) | (s[2] & 0x3F);
+    }
+    if ((b0 & 0xF8) == 0xF0 && (s[1] & 0xC0) == 0x80 && (s[2] & 0xC0) == 0x80 && (s[3] & 0xC0) == 0x80) {
+        *pp += 4;
+        return ((b0 & 0x07) << 18) | ((s[1] & 0x3F) << 12) | ((s[2] & 0x3F) << 6) | (s[3] & 0x3F);
+    }
+    *pp += 1;
+    return b0;
+}
+
 void gfx_draw_text(int x, int y, const char* s, uint32_t fg, uint32_t bg)
 {
     int cx = x;
     while (*s) {
-        if (*s == '\n') {
+        const char* cur = s;
+        int cp = utf8_decode(&cur);
+        if (cp == '\n') {
             cx = x;
             y += FONT_BYTES_PER_CHAR;
-        } else {
-            gfx_draw_char(cx, y, *s, fg, bg);
-            cx += 8;
+            s = cur;
+            continue;
         }
-        s++;
+        if (cp < 0x80) {
+            gfx_draw_char(cx, y, (char)cp, fg, bg);
+            cx += 8;
+        } else {
+            int idx = cjk_find(cp);
+            if (idx >= 0) {
+                gfx_draw_cjk_glyph(cx, y, idx, fg, bg);
+                cx += 16;
+            } else {
+                gfx_draw_char(cx, y, '?', fg, bg);
+                cx += 8;
+            }
+        }
+        s = cur;
     }
+}
+
+int gfx_text_width(const char* s)
+{
+    int w = 0;
+    while (*s) {
+        const char* cur = s;
+        int cp = utf8_decode(&cur);
+        if (cp == '\n') {
+            s = cur;
+            continue;
+        }
+        if (cp < 0x80) w += 8;
+        else w += 16;
+        s = cur;
+    }
+    return w;
+}
+
+void gfx_cjk_load(const void* data, uint32_t size)
+{
+    const uint8_t* p = (const uint8_t*)data;
+    cjk_count = 0;
+    if (size < 6) return;
+    if (p[0] != 'L' || p[1] != 'Z' || p[2] != 'F' || p[3] != '1') return;
+    int count = p[4] | (p[5] << 8);
+    uint32_t off = 6;
+    for (int i = 0; i < count && i < CJK_MAX_GLYPHS; i++) {
+        if (off + 36 > size) break;
+        uint32_t cp = (uint32_t)p[off] | ((uint32_t)p[off + 1] << 8) |
+                      ((uint32_t)p[off + 2] << 16) | ((uint32_t)p[off + 3] << 24);
+        off += 4;
+        for (int b = 0; b < CJK_GLYPH_BYTES; b++)
+            cjk_glyph[i][b] = p[off + b];
+        cjk_cp[i] = cp;
+        cjk_count++;
+        off += CJK_GLYPH_BYTES;
+    }
+}
+
+int gfx_cjk_count(void)
+{
+    return cjk_count;
 }
 
 static const uint16_t gfx_cursor_arrow[16] = {

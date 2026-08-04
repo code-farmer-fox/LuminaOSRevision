@@ -533,6 +533,16 @@ void kernel_main(uint8_t boot_drive)
     if (fat16_init() == 0) {
         fs_ready = 1;
         tty_puts("FAT16 filesystem ready\n\n");
+        static uint8_t font_buf[8192];
+        uint32_t fsz = 0;
+        if (fat16_read_file("FONT16.BIN", font_buf, sizeof(font_buf), &fsz) == 0) {
+            gfx_cjk_load(font_buf, fsz);
+            tty_puts("CJK font loaded (");
+            print_uint(gfx_cjk_count());
+            tty_puts(" glyphs)\n");
+        } else {
+            tty_puts("CJK font not found\n");
+        }
     } else {
         tty_puts("FAT16 init failed (disk I/O only)\n\n");
     }

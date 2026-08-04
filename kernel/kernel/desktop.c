@@ -34,12 +34,12 @@ enum {
 };
 
 static const desktop_icon_t icons[] = {
-    { "Files",  0x4F7FBF, "FILES.LSP",   APP_LAUNCH },
-    { "Notes",  0x3FAF6F, "NOTEPAD.LSP", APP_LAUNCH },
-    { "About",  0xBF6F3F, "ABOUT.LSP",   APP_LAUNCH },
-    { "System", 0x9F9FAF, "SYSTEM.LSP",  APP_LAUNCH },
-    { "Reboot", 0xAF4F4F, 0,             APP_REBOOT },
-    { "Halt",   0x8F8FAF, 0,             APP_HALT  },
+    { "文件",   0x4F7FBF, "FILES.LSP",   APP_LAUNCH },
+    { "记事",   0x3FAF6F, "NOTEPAD.LSP", APP_LAUNCH },
+    { "关于",   0xBF6F3F, "ABOUT.LSP",   APP_LAUNCH },
+    { "系统",   0x9F9FAF, "SYSTEM.LSP",  APP_LAUNCH },
+    { "重启",   0xAF4F4F, 0,             APP_REBOOT },
+    { "关机",   0x8F8FAF, 0,             APP_HALT  },
 };
 #define ICON_COUNT ((int)(sizeof(icons) / sizeof(icons[0])))
 
@@ -105,29 +105,15 @@ static void dt_draw_icon(int idx, int hover)
     gfx_fill_rect(x + 6, y + 6, ICON_W - 12, 10, 0x00000088);
     gfx_draw_text(x + 8, y + 8, "Lumina", 0xFFFFFF, base);
 
-    if (idx == 0) {
-        gfx_draw_text(x + 8, y + 22, "Files", 0xFFFFFF, base);
-    } else if (idx == 1) {
-        gfx_draw_text(x + 8, y + 22, "Notes", 0xFFFFFF, base);
-    } else if (idx == 2) {
-        gfx_draw_text(x + 8, y + 22, "About", 0xFFFFFF, base);
-    } else if (idx == 3) {
-        gfx_draw_text(x + 8, y + 22, "System", 0xFFFFFF, base);
-    } else if (idx == 4) {
-        gfx_draw_text(x + 8, y + 22, "Reboot", 0xFFFFFF, base);
-    } else if (idx == 5) {
-        gfx_draw_text(x + 8, y + 22, "Halt", 0xFFFFFF, base);
-    }
-
     if (hover)
         gfx_draw_rect(x, y, ICON_W, ICON_H, 0xFFFFFF);
     else
         gfx_draw_rect(x, y, ICON_W, ICON_H, dark);
 
-    int text_w = dt_str_len(ic->name) * FONT_W;
+    int text_w = gfx_text_width(ic->name);
     int text_x = x + (ICON_W - text_w) / 2;
     if (text_x < x) text_x = x;
-    gfx_draw_text(text_x, y + ICON_H + 4, ic->name, 0xFFFFFF, 0x0F2238);
+    gfx_draw_text(text_x, y + ICON_H + 8, ic->name, 0xFFFFFF, 0x0F2238);
 }
 
 static void dt_draw_taskbar(const char* user)
@@ -226,7 +212,7 @@ static void dt_run_app(const char* title, const char* path, const char* user)
 
     char open_file[64];
     if (syscall_pending_file(open_file, sizeof(open_file)) > 0) {
-        dt_prepare_win("Notepad", user);
+        dt_prepare_win("记事本", user);
         r = lsp_load("NOTEPAD.LSP");
         gfx_clear_window();
         gfx_cursor_reset();

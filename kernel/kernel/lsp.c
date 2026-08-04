@@ -7,7 +7,7 @@
 
 #define PAGE_SIZE 4096
 #define USER_STACK_TOP (USER_SPACE_TOP)
-#define USER_STACK_PAGES 4
+#define USER_STACK_PAGES 16
 
 extern void enter_user_mode(uint32_t eip, uint32_t esp, uint32_t cs, uint32_t ss, uint32_t eflags);
 
@@ -51,6 +51,6 @@ int lsp_load(const char* path)
 
     lsp_zero(USER_BASE + hdr.load_size, hdr.bss_size);
 
-    enter_user_mode(entry, USER_STACK_TOP, GDT_USER_CS | 3, GDT_USER_DS | 3, 0x202);
+    enter_user_mode(entry, USER_STACK_TOP - 0x1000, GDT_USER_CS | 3, GDT_USER_DS | 3, 0x202);
     return 0;
 }
