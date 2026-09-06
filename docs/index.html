@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuminaOS</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #fafafa;
+            color: #333;
+            line-height: 1.6;
+        }
+        nav {
+            background: #fff;
+            border-bottom: 1px solid #e5e5e5;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        nav .logo { font-size: 1.25rem; font-weight: 700; color: #111; text-decoration: none; }
+        nav .logo span { color: #0066cc; }
+        nav .right { display: flex; align-items: center; }
+        nav a { color: #555; text-decoration: none; margin-left: 1.5rem; font-size: 0.9rem; }
+        nav a:hover { color: #0066cc; }
+        .lang-btn {
+            background: #f0f0f0; border: 1px solid #ddd; border-radius: 4px;
+            padding: 0.3rem 0.75rem; font-size: 0.85rem; cursor: pointer;
+            color: #555; margin-left: 1.5rem; transition: all 0.2s;
+        }
+        .lang-btn:hover { border-color: #0066cc; color: #0066cc; }
+        .hero {
+            text-align: center;
+            padding: 6rem 2rem 4rem;
+            background: linear-gradient(180deg, #fff 0%, #f5f7fa 100%);
+        }
+        .hero h1 { font-size: 3rem; font-weight: 700; color: #111; margin-bottom: 1rem; }
+        .hero h1 span { color: #0066cc; }
+        .hero p { font-size: 1.15rem; color: #666; max-width: 600px; margin: 0 auto 2rem; }
+        .btn {
+            display: inline-block; padding: 0.75rem 2rem; border-radius: 6px;
+            text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: all 0.2s;
+        }
+        .btn-primary { background: #0066cc; color: #fff; }
+        .btn-primary:hover { background: #0052a3; }
+        .btn-outline { border: 1px solid #ddd; color: #555; margin-left: 0.75rem; }
+        .btn-outline:hover { border-color: #0066cc; color: #0066cc; }
+        .section { max-width: 900px; margin: 0 auto; padding: 4rem 2rem; }
+        .section h2 { font-size: 1.75rem; font-weight: 700; color: #111; margin-bottom: 1.5rem; }
+        .features {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;
+        }
+        .feature { background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 1.5rem; }
+        .feature h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; color: #111; }
+        .feature p { font-size: 0.9rem; color: #666; }
+        .screenshots {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem;
+        }
+        .screenshot { text-align: center; }
+        .screenshot img {
+            width: 100%; border-radius: 12px; border: 1px solid #e5e5e5;
+        }
+        .screenshot p { margin-top: 0.75rem; font-size: 0.9rem; color: #666; font-weight: 500; }
+        .install-steps {
+            background: #fff; border: 1px solid #e5e5e5; border-radius: 8px;
+            padding: 1.5rem 2rem; margin-top: 1rem;
+        }
+        .install-steps li { margin-bottom: 0.5rem; font-size: 0.95rem; color: #444; }
+        .install-steps code {
+            background: #f0f0f0; padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.85rem;
+        }
+        footer {
+            text-align: center; padding: 2rem; border-top: 1px solid #e5e5e5; color: #999; font-size: 0.85rem;
+        }
+        footer a { color: #0066cc; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a class="logo" href="#">Lumina<span>OS</span></a>
+        <div class="right">
+            <a href="#features" data-en="Features" data-zh="特性">Features</a>
+            <a href="#screenshots" data-en="Screenshots" data-zh="截图">Screenshots</a>
+            <a href="#build" data-en="Build" data-zh="构建">Build</a>
+            <a href="https://github.com/Lumina-hc/LuminaOS">GitHub</a>
+            <button class="lang-btn" onclick="toggleLang()">EN / 中文</button>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <h1>Lumina<span>OS</span></h1>
+        <p data-en="A hobby operating system for i386 built from scratch — bootloader, kernel, desktop, and LSP apps." data-zh="从零构建的 i386 兴趣操作系统 —— 引导程序、内核、桌面环境和 LSP 应用。">A hobby operating system for i386 built from scratch — bootloader, kernel, desktop, and LSP apps.</p>
+        <a href="https://github.com/Lumina-hc/LuminaOS" class="btn btn-primary" data-en="View on GitHub" data-zh="GitHub 查看">View on GitHub</a>
+        <a href="#build" class="btn btn-outline" data-en="Build Now" data-zh="立即构建">Build Now</a>
+    </div>
+
+    <div class="section" id="features">
+        <h2 data-en="Features" data-zh="特性">Features</h2>
+        <div class="features">
+            <div class="feature">
+                <h3 data-en="Custom Bootloader" data-zh="自定义引导程序">Custom Bootloader</h3>
+                <p data-en="Multiboot-compliant bootloader entering 32-bit protected mode." data-zh="兼容 Multiboot 的引导程序，进入 32 位保护模式。">Multiboot-compliant bootloader entering 32-bit protected mode.</p>
+            </div>
+            <div class="feature">
+                <h3 data-en="Memory Management" data-zh="内存管理">Memory Management</h3>
+                <p data-en="Physical memory manager with paging support." data-zh="物理内存管理器，支持分页。">Physical memory manager with paging support.</p>
+            </div>
+            <div class="feature">
+                <h3 data-en="Desktop Environment" data-zh="桌面环境">Desktop Environment</h3>
+                <p data-en="VGA graphics with a windowed desktop and mouse support." data-zh="VGA 图形驱动，窗口化桌面，支持鼠标。">VGA graphics with a windowed desktop and mouse support.</p>
+            </div>
+            <div class="feature">
+                <h3 data-en="FAT16 Filesystem" data-zh="FAT16 文件系统">FAT16 Filesystem</h3>
+                <p data-en="Full FAT16 support on IDE disk images." data-zh="IDE 磁盘镜像上的完整 FAT16 支持。">Full FAT16 support on IDE disk images.</p>
+            </div>
+            <div class="feature">
+                <h3 data-en="LSP Applications" data-zh="LSP 应用程序">LSP Applications</h3>
+                <p data-en="Run user-space apps compiled to the custom LSP format." data-zh="运行编译为自定义 LSP 格式的用户空间应用。">Run user-space apps compiled to the custom LSP format.</p>
+            </div>
+            <div class="feature">
+                <h3 data-en="Built-in Apps" data-zh="内置应用">Built-in Apps</h3>
+                <p data-en="Notepad, Files, About, System — ready to use." data-zh="记事本、文件管理、关于、系统信息 —— 开箱即用。">Notepad, Files, About, System — ready to use.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section" id="screenshots">
+        <h2 data-en="Screenshots" data-zh="截图">Screenshots</h2>
+        <div class="screenshots">
+            <div class="screenshot">
+                <img src="cmd.png" alt="Shell">
+                <p data-en="Shell" data-zh="终端">Shell</p>
+            </div>
+            <div class="screenshot">
+                <img src="ui.png" alt="Desktop">
+                <p data-en="Desktop" data-zh="桌面">Desktop</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section" id="build">
+        <h2 data-en="Build" data-zh="构建">Build</h2>
+        <div class="install-steps">
+            <ol>
+                <li data-en="Install dependencies:" data-zh="安装依赖：">Install dependencies: <code>NASM</code> <code>i686-elf-gcc</code> <code>QEMU</code></li>
+                <li data-en="Clone the repository:" data-zh="克隆仓库：">Clone the repository: <code>git clone https://github.com/Lumina-hc/LuminaOS.git</code></li>
+                <li data-en="Enter the directory:" data-zh="进入目录：">Enter the directory: <code>cd LuminaOS</code></li>
+                <li data-en="Build:" data-zh="构建：">Build: <code>.\build.ps1</code></li>
+                <li data-en="Run in QEMU:" data-zh="在 QEMU 中运行：">Run in QEMU: <code>.\run.ps1</code></li>
+            </ol>
+        </div>
+    </div>
+
+    <footer>
+        <p>LuminaOS &copy; 2026 | <a href="https://github.com/Lumina-hc">Lumina-hc</a> | <a href="https://github.com/Lumina-hc/LuminaOS/blob/main/LICENSE">Apache-2.0</a></p>
+    </footer>
+
+    <script>
+        let lang = 'en';
+        function toggleLang() {
+            lang = lang === 'en' ? 'zh' : 'en';
+            document.querySelectorAll('[data-en]').forEach(el => {
+                el.textContent = el.getAttribute('data-' + lang);
+            });
+        }
+    </script>
+</body>
+</html>
