@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 $ROOT = $PSScriptRoot
-$BUILD = "$ROOT\build"
+$BUILD = "$ROOT\build_LuminaOS"
 $SDK = Join-Path (Split-Path $ROOT -Parent) "LuminaOS-SDK"
 
 Write-Host "=== LuminaOS Build ===" -ForegroundColor Cyan

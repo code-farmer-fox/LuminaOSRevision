@@ -25,21 +25,28 @@ kernel/            Kernel source (C and assembly)
   arch/i386/       x86 entry, GDT, IDT, IRQ, syscalls, user mode
   include/kernel/  Kernel headers
   kernel/          Core kernel modules
-build.ps1          Build script (bootloader, kernel, floppy, hdd, LSP apps)
-run.ps1            QEMU launcher
+build.ps1          Build script (bootloader, kernel, floppy, hdd, LSP apps) for Windows Powershell
+run.ps1            QEMU launcher for Unix Bash
+build.sh           Build script (bootloader, kernel, floppy, hdd, LSP apps) for Unix Bash
+run.sh             QEMU launcher for Unix Bash
 ```
 
 ## Requirements
 
-- Windows with PowerShell
+- Windows with PowerShell or Unix with Bash
 - NASM
 - i686-elf cross toolchain (`i686-elf-gcc`, `i686-elf-ld`, `i686-elf-objcopy`, `i686-elf-nm`)
 - QEMU (`qemu-system-i386`)
+- Python (`python312`, if you are using Unix)
 
 ## Build
 
 ```powershell
 .\build.ps1
+```
+or
+```bash
+bash build.sh
 ```
 
 This produces:
@@ -53,7 +60,10 @@ This produces:
 ```powershell
 .\run.ps1
 ```
-
+or
+```bash
+bash run.sh
+```
 Options:
 
 - `-NoDebug` — do not start the GDB stub (QEMU listens on `tcp::1234` by default)
