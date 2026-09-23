@@ -652,3 +652,12 @@ int fat16_cd(const char* name)
     fs.cur_cluster = entry.first_cluster;
     return 0;
 }
+uint16_t fat16_current_cluster(void)
+{
+    return fs.cur_cluster;
+}
+
+int fat16_is_root(void)
+{
+    return fs.cur_cluster == 0;
+}

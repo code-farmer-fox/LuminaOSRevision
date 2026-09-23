@@ -40,6 +40,7 @@ static const desktop_icon_t icons[] = {
     { "系统",   0x9F9FAF, "SYSTEM.LSP",  APP_LAUNCH },
     { "重启",   0xAF4F4F, 0,             APP_REBOOT },
     { "关机",   0x8F8FAF, 0,             APP_HALT  },
+    {"命令行",  0x000000, "CMD.LSP",     APP_LAUNCH}
 };
 #define ICON_COUNT ((int)(sizeof(icons) / sizeof(icons[0])))
 

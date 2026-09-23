@@ -329,3 +329,29 @@ int syscall_dispatch(int num, int a1, int a2, int a3, int a4)
         return -1;
     return syscall_table[num](a1, a2, a3, a4);
 }
+#define SYSCALL_GETCWD  28
+#define SYSCALL_GETUSER 29
+
+static int sc_getcwd(int buf, int max, int c, int d)
+{
+    (void)c; (void)d;
+    extern const char* shell_cwd(void);   /* shell.c 提供 */
+    const char* path = shell_cwd();
+    char* dst = (char*)buf;
+    int i = 0;
+    while (path[i] && i < max - 1) { dst[i] = path[i]; i++; }
+    dst[i] = '\0';
+    return i;
+}
+
+static int sc_getuser(int buf, int max, int c, int d)
+{
+    (void)c; (void)d;
+    extern const char* shell_user(void);
+    const char* u = shell_user();
+    char* dst = (char*)buf;
+    int i = 0;
+    while (u[i] && i < max - 1) { dst[i] = u[i]; i++; }
+    dst[i] = '\0';
+    return i;
+}
